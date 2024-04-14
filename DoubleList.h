@@ -6,16 +6,16 @@
 #include <utility>
 
 template <typename Item>
-class double_linked_list
+class List
 {
 public:
-    using       value_type      = Item;
-    using       size_type       = size_t;
-    using       difference_type = ptrdiff_t;
-    using       pointer         = value_type *;
-    using       const_pointer   = const value_type *;
-    using       reference       = value_type &;
-    using       const_reference = const value_type &;
+    using value_type      = Item;
+    using size_type       = size_t;
+    using difference_type = ptrdiff_t;
+    using pointer         = value_type *;
+    using const_pointer   = const value_type *;
+    using reference       = value_type &;
+    using const_reference = const value_type &;
 
 private:
     struct node {
@@ -27,37 +27,37 @@ private:
     };
 
 public:
-    class double_linked_list_const_iterator {
+    class ListConstIterator {
     private:
-        friend class double_linked_list;
+        friend class List;
 
-        explicit double_linked_list_const_iterator(const node *ptr) noexcept : m_current {ptr} {}
+        explicit ListConstIterator(const node *ptr) noexcept : m_current {ptr} {}
 
     public:
-        using       difference_type     = double_linked_list::difference_type;
-        using       value_type          = double_linked_list::value_type;
-        using       pointer             = double_linked_list::const_pointer;
-        using       reference           = double_linked_list::const_reference;
-        using       iterator_category   = std::bidirectional_iterator_tag;
+        using difference_type     = List::difference_type;
+        using value_type          = List::value_type;
+        using pointer             = List::const_pointer;
+        using reference           = List::const_reference;
+        using iterator_category   = std::bidirectional_iterator_tag;
 
         reference operator*() const noexcept {
             assert(m_current != nullptr);
             return m_current->data;
         }
 
-        double_linked_list_const_iterator& operator++() noexcept {
+        ListConstIterator& operator++() noexcept {
             assert(m_current != nullptr);
             m_current = m_current->next;
             return *this;
         }
 
-        double_linked_list_const_iterator& operator--() noexcept {
+        ListConstIterator& operator--() noexcept {
             assert(m_current != nullptr);
             m_current = m_current->prev;
             return *this;
         }
 
-        double_linked_list_const_iterator operator++(int) noexcept {
+        ListConstIterator operator++(int) noexcept {
             assert(m_current != nullptr);
             auto copy = *this;
             
@@ -65,7 +65,7 @@ public:
             return copy;
         }
 
-        double_linked_list_const_iterator operator--(int) noexcept {
+        ListConstIterator operator--(int) noexcept {
             assert(m_current != nullptr);
             auto copy = *this;
             
@@ -73,11 +73,11 @@ public:
             return copy;
         }
 
-        bool operator==(double_linked_list_const_iterator other) const noexcept {
+        bool operator==(ListConstIterator other) const noexcept {
             return m_current == other.m_current;
         }
 
-        bool operator!=(double_linked_list_const_iterator other) const noexcept {
+        bool operator!=(ListConstIterator other) const noexcept {
             return !(*this == other);
         }
 
@@ -90,57 +90,57 @@ public:
         const node *m_current;
     };
 
-    class double_linked_list_iterator : public double_linked_list_const_iterator {
+    class ListIterator : public ListConstIterator {
     private:
-        friend class double_linked_list;
+        friend class List;
 
-        explicit double_linked_list_iterator(node *ptr) noexcept : double_linked_list_const_iterator {ptr} {}
+        explicit ListIterator(node *ptr) noexcept : ListConstIterator {ptr} {}
 
     public:
-        using       difference_type     = double_linked_list::difference_type;
-        using       value_type          = double_linked_list::value_type;
-        using       pointer             = double_linked_list::pointer;
-        using       reference           = double_linked_list::reference;
-        using       iterator_category   = std::bidirectional_iterator_tag;
+        using difference_type     = List::difference_type;
+        using value_type          = List::value_type;
+        using pointer             = List::pointer;
+        using reference           = List::reference;
+        using iterator_category   = std::bidirectional_iterator_tag;
 
         reference operator*() noexcept {
-            auto &&res = double_linked_list_const_iterator::operator*();
+            auto &&res = ListConstIterator::operator*();
             return const_cast<reference>(res);
         }
 
-        double_linked_list_iterator& operator++() noexcept {
-            double_linked_list_iterator::operator++();
+        ListIterator& operator++() noexcept {
+            ListIterator::operator++();
             return *this;
         }
 
-        double_linked_list_iterator operator++(int) noexcept {
-            auto res = double_linked_list_const_iterator::operator++(0);
-            return double_linked_list_iterator {const_cast<node *>(res.Get())};
+        ListIterator operator++(int) noexcept {
+            auto res = ListConstIterator::operator++(0);
+            return ListIterator {const_cast<node *>(res.Get())};
         }
 
-        double_linked_list_iterator& operator--() noexcept {
-            double_linked_list_iterator::operator--();
+        ListIterator& operator--() noexcept {
+            ListIterator::operator--();
             return *this;
         }
 
-        double_linked_list_iterator operator--(int) noexcept {
-            auto res = double_linked_list_const_iterator::operator--(0);
-            return double_linked_list_iterator {const_cast<node *>(res.Get())};
+        ListIterator operator--(int) noexcept {
+            auto res = ListConstIterator::operator--(0);
+            return ListIterator {const_cast<node *>(res.Get())};
         }
     };
 
-    using       iterator       = double_linked_list_iterator;
-    using       const_iterator = double_linked_list_const_iterator;
+    using iterator       = ListIterator;
+    using const_iterator = ListConstIterator;
 
-    double_linked_list() = default;
+    List() = default;
 
-    double_linked_list(std::initializer_list<value_type> items) {
+    List(std::initializer_list<value_type> items) {
         for (auto &item : items) {
             push_back(item);
         }
     }
 
-    ~double_linked_list() {
+    ~List() {
         clear();
     }
 
@@ -204,7 +204,7 @@ public:
     }
 
     iterator find(const_reference item) noexcept {
-        auto it = static_cast<const double_linked_list &>(*this).find(item);
+        auto it = static_cast<const List &>(*this).find(item);
         return iterator {const_cast<node *>(it.Get())};
     }
 

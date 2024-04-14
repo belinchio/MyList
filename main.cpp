@@ -1,7 +1,7 @@
 #include "DoubleList.h"
 
 template <typename Item>
-void PrintList(const double_linked_list<Item> &list) {
+void PrintList(const List<Item> &list) {
     std::cout << "[ ";
     for (const auto &item : list) {
         std::cout << item << ' ';
@@ -11,7 +11,7 @@ void PrintList(const double_linked_list<Item> &list) {
 }
 
 int main() {
-    double_linked_list<int> l {1, 2, 3};
+    List<int> l {1, 2, 3};
     PrintList(l);
     
     {
@@ -36,6 +36,6 @@ int main() {
     l.clear();
     PrintList(l);
 
-    const double_linked_list<int> cl {2, 4, 6};
+    const List<int> cl {2, 4, 6};
     PrintList(cl);
 }
