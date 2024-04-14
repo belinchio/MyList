@@ -5,22 +5,22 @@
 #include <iostream>
 #include <utility>
 
-template <typename Item>
+template <typename T>
 class List
 {
 public:
-    using value_type      = Item;
+    using value_type      = T;
     using size_type       = size_t;
     using difference_type = ptrdiff_t;
-    using pointer         = value_type *;
-    using const_pointer   = const value_type *;
-    using reference       = value_type &;
-    using const_reference = const value_type &;
+    using pointer         = value_type*;
+    using const_pointer   = const value_type*;
+    using reference       = value_type&;
+    using const_reference = const value_type&;
 
 private:
     struct node {
-        node *next = nullptr;
-        node *prev = nullptr;
+        node* next = nullptr;
+        node* prev = nullptr;
         value_type data;
 
         node(value_type item) noexcept : data {std::move(item)} {}
@@ -31,7 +31,7 @@ public:
     private:
         friend class List;
 
-        explicit ListConstIterator(const node *ptr) noexcept : m_current {ptr} {}
+        explicit ListConstIterator(const node* ptr) noexcept : m_current {ptr} {}
 
     public:
         using difference_type     = List::difference_type;
@@ -82,19 +82,19 @@ public:
         }
 
     protected:
-        const node *Get() const noexcept {
+        const node* Get() const noexcept {
             return m_current;
         }
 
     protected:
-        const node *m_current;
+        const node* m_current;
     };
 
     class ListIterator : public ListConstIterator {
     private:
         friend class List;
 
-        explicit ListIterator(node *ptr) noexcept : ListConstIterator {ptr} {}
+        explicit ListIterator(node* ptr) noexcept : ListConstIterator {ptr} {}
 
     public:
         using difference_type     = List::difference_type;
@@ -125,7 +125,7 @@ public:
 
         ListIterator operator--(int) noexcept {
             auto res = ListConstIterator::operator--(0);
-            return ListIterator {const_cast<node *>(res.Get())};
+            return ListIterator {const_cast<node*>(res.Get())};
         }
     };
 
@@ -175,7 +175,7 @@ public:
     }
 
     void insert(const_iterator place, value_type item) {
-        auto ptr = const_cast<node *>(place.Get());
+        auto ptr = const_cast<node*>(place.Get());
         if (!ptr) {
             push_back(std::move(item));
             return;
@@ -204,12 +204,12 @@ public:
     }
 
     iterator find(const_reference item) noexcept {
-        auto it = static_cast<const List &>(*this).find(item);
-        return iterator {const_cast<node *>(it.Get())};
+        auto it = static_cast<const List&>(*this).find(item);
+        return iterator {const_cast<node*>(it.Get())};
     }
 
     void erase(const_iterator place) noexcept {
-        auto ptr = const_cast<node *>(place.Get());
+        auto ptr = const_cast<node*>(place.Get());
         assert(ptr != nullptr);
 
         if (ptr->prev) {
@@ -256,6 +256,6 @@ public:
     }
 
 private:
-    node *m_head = nullptr;
-    node *m_tail = nullptr;
+    node* m_head = nullptr;
+    node* m_tail = nullptr;
 };
